@@ -122,7 +122,15 @@ int initialize(listNode** h) {
 
 /* 메모리 해제 */
 int freeList(listNode* h){
+    listNode* p = h;          // 노드 p에 헤드 값 first 지정
 
+   listNode* prev = NULL;           // prev라는 노드에 NULL 지정
+   while(p != NULL) {               // 노드 P가 NULL이 아닐때까지 반복
+      prev = p;                     
+      p = p->rlink;
+      free(prev);                   // prev 노드에 할당된 메모리 반환
+   }
+   free(h);           
 	return 0;
 }
 
@@ -171,7 +179,7 @@ void printList(listNode* h) {
  */
 int insertLast(listNode* h, int key) {
 
-	return 1;
+   return 1;
 }
 
 
@@ -179,8 +187,7 @@ int insertLast(listNode* h, int key) {
  * list의 마지막 노드 삭제
  */
 int deleteLast(listNode* h) {
-
-
+   
 	return 1;
 }
 
@@ -214,7 +221,24 @@ int insertFirst(listNode* h, int key) {             // 첫번째 위치에 노드를 삽입
  * list의 첫번째 노드 삭제
  */
 int deleteFirst(listNode* h) {
+    listNode* trail;
+   if(h -> rlink == NULL)
+   {   // 삭제할 노드가 없을 경우 종료
+      printf("삭제할 마지막 노드가 없습니다.\n");
+      return 0;
+   } 
 
+   else if(h -> rlink == NULL){         // h노드의 rlink가 NULL이 아니면
+      freeList(h);                      // h노드에 할당된 메모리 제거
+      h -> rlink = NULL;                // h노드의 rlink, llink NULL 처리
+      h -> llink = NULL;              
+      return 1;                     
+   }
+   else{                 
+   trail = h -> rlink;                  // trail을 h노드의 rlink로 지정
+   h -> rlink = trail ->rlink;          // h노드의 rlink가 trail의 rlink를 가리킴
+   
+   }
 
 	return 1;
 
@@ -225,9 +249,23 @@ int deleteFirst(listNode* h) {
  * 리스트의 링크를 역순으로 재 배치
  */
 int invertList(listNode* h) {
+    listNode* one;                   // 노드 one, two, three 생성
+      listNode* two;
+      listNode* three;
 
+      one = h ;                // one 포인터를 첫번째 노드에 설정
+      two = NULL;
+      three = NULL;
 
+      while (one != NULL){             // one의 값이 NULL이 아닐동안 반복
+         three = two;                  // three를 two가 가리키는 노드에 지정
+         two = one;                    // two 노드를 one이 가리키는 노드에 지정
+         one = one ->rlink;            // one 노드를 다음 노드로 이동
+         two -> rlink = three;          // two 노드가 가리키는 rlink를 three로 지정
+      }
+      h = two;                // h 노드를 two로 변경
 	return 0;
+
 }
 
 
@@ -236,8 +274,33 @@ int invertList(listNode* h) {
  *  리스트를 검색하여, 입력받은 key보다 큰값이 나오는 노드 바로 앞에 삽입 
  **/
 int insertNode(listNode* h, int key) {
-
-	return 0;
+    listNode* node = (listNode*)malloc(sizeof(listNode));	//node라는 리스트 노드 할당
+	listNode* find = h ->llink;								// 찾고자하는 
+	node->key = key;
+	if(h == NULL)
+	{
+		printf("저장된 데이터가 없습니다.\n");
+		node->rlink = NULL;
+		node->llink = NULL;
+		return 0;
+		
+	}else{
+		while(find->rlink!=NULL){
+			if(find->rlink->key > node->key)
+			{
+				node->rlink = find->rlink;		//node의 rlink를 find의 rlink로 변경
+				find->rlink->llink = node;		//find의 rlink와 link를 node에 지정
+				node->llink = find;				//node의 llink를 find에 지정
+				find->rlink = node;				//find의 rlink를 node에 지정
+				return 0;
+			}
+			find = find->rlink;					//find의 다음 단계를 탐색
+		}
+		insertLast(h, key);						//큰 값이 없을시 마지막에 노드 추가
+	}
+	
+	
+	return 0;;
 }
 
 
@@ -245,7 +308,7 @@ int insertNode(listNode* h, int key) {
  * list에서 key에 대한 노드 삭제
  */
 int deleteNode(listNode* h, int key) {
-listNode *find = h -> rlink;                  // find 노드를 헤더의 rlink가 가리키는 노드를 가리키게 지정
+listNode *find = h ;                  // find 노드를 헤더를 가리키는 노드를 가리키게 지정
   listNode *frontfind = NULL;                          // frontfind 노드 지정하고 NULL로 초기화
   if(h->rlink == NULL)                    // 헤더의 rlink부터 탐색 시작
   {
