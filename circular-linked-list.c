@@ -188,9 +188,22 @@ int deleteLast(listNode* h) {
 /**
  * list 처음에 key에 대한 노드하나를 추가
  */
-int insertFirst(listNode* h, int key) {
-
-
+int insertFirst(listNode* h, int key) {             // 첫번째 위치에 노드를 삽입하는 함수
+    listNode* newNode, *temp;                       // newNode라는 첫번째 노드와 temp라는 임시 순회 포인터 지정
+    newNode = (listNode*)malloc(sizeof(listNode));  // 첫번째 위치에 삽입하게 될 newNode 할당
+    newNode -> key = key;                           // newNode의 데이터필드 값을 key로 지정
+    if(h -> rlink == NULL){                         // 만약 헤더노드의 오른쪽 링크가 NULL 이라면(입력된 노드가 없다면)
+        h -> rlink == newNode;                      // 헤더노드의 rlink가 newNode를 가리키게하고
+        newNode -> rlink = newNode;                 // newNode의 rlink는 자기 자신을 가리키게하여 newNode가 첫번째 노드이자 마지막 노드가 되도록 설정한다.
+    }
+    else{                                           // 이미 입력된 노드가 있다면
+        temp = h -> rlink;                          // 첫번째 노드의 rlink를 temp에 설정
+        while(temp -> rlink != h ->rlink)           // temp의 rlink와 h의 rlink가 같지 않다면
+            temp = temp->rlink;                     // temp를 temp의 rlink따라 이동 시킨다.
+        newNode -> rlink = temp -> rlink;           // temp가 가리키는 노드의 rlink로 temp의 rlink를 가리킨다. 
+        temp -> rlink = newNode;                    // temp가 가리키는 마지막 노드의 rlink는 newNode를 가리킨다.(원형 연결)
+        h ->rlink = newNode;                        // newNode를 헤더 노드가 가리켜서 newNode를 첫번째 노드가 되도록 연결한다.
+    }
 	return 1;
 }
 
