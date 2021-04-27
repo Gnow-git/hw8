@@ -203,6 +203,9 @@ int insertFirst(listNode* h, int key) {             // 첫번째 위치에 노드를 삽입
         newNode -> rlink = temp -> rlink;           // temp가 가리키는 노드의 rlink로 temp의 rlink를 가리킨다. 
         temp -> rlink = newNode;                    // temp가 가리키는 마지막 노드의 rlink는 newNode를 가리킨다.(원형 연결)
         h ->rlink = newNode;                        // newNode를 헤더 노드가 가리켜서 newNode를 첫번째 노드가 되도록 연결한다.
+        h->llink = newNode;                         // 헤더노드의 왼쪽 링크를 맨 오른쪽 노드에 연결.
+        newNode ->llink = h;
+    
     }
 	return 1;
 }
@@ -242,8 +245,27 @@ int insertNode(listNode* h, int key) {
  * list에서 key에 대한 노드 삭제
  */
 int deleteNode(listNode* h, int key) {
-
-	return 0;
+listNode *find = h -> rlink;                  // find 노드를 헤더의 rlink가 가리키는 노드를 가리키게 지정
+  listNode *frontfind = NULL;                          // frontfind 노드 지정하고 NULL로 초기화
+  if(h->rlink == NULL)                    // 헤더의 rlink부터 탐색 시작
+  {
+     printf("저장된 데이터가 없습니다 !\n");
+     return 0;
+  }
+  else{
+     while(find->rlink!=NULL){                    // find의 rlink가 NULL이 될때까지 돈다.
+        if (find-> rlink-> key == key)            // 입력한 key 값과 같은 노드의 값이 있다면
+        {
+           frontfind = find ->rlink;              // find의 rlink를 frontfind로 가리킨다.
+           find -> rlink = find ->rlink->rlink;     // 삭제하고자하는 노드의 양옆을 이어준다.
+           free(frontfind);                      // 대상 노드를 삭제시킨다.
+           return 0;
+        }
+        find = find -> rlink;                      // 찾는 값이 없으면 다음 데이터로 넘어간다.
+     }
+     if (find == NULL) printf("찾는 데이터가 없습니다\n");
+  }
+  return 0;
 }
 
 
