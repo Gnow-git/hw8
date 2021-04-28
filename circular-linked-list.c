@@ -41,7 +41,7 @@ int main()
 	char command;
 	int key;
 	listNode* headnode=NULL;
-
+		printf("\t[-----[이 명 국]  [2017038100]-----]\n");
 	do{
 		printf("----------------------------------------------------------------\n");
 		printf("                  Doubly Circular Linked List                   \n");
@@ -179,24 +179,64 @@ void printList(listNode* h) {
  */
 int insertLast(listNode* h, int key) {
 
-   return 1;
-}
+   listNode* node = (listNode*)malloc(sizeof(listNode));   // 신규 노드 지정 후 node의 데이터 공간을 메모리에 할당 받아 node에 저장.
+   listNode* lastNode;         // 노드 존재시 마지막 노드 정의.
+   node -> key = key;         // node 필드에 key를 저장
+   node ->rlink = NULL;         // key 저장 후 아직 가리키는 노드가 없기때문에 NULL 할당	
+   if(h  == NULL ){   // NULL일 경우
+      h -> rlink = node;      // 시작노드가 node를 가리킴
+	  h -> llink = node;
+	  node -> llink = h;
+	  node -> rlink = h;
+      return 1;            // 종료
+   }
+   else{
+	   node -> rlink = h;
+	   node-> llink = h->llink;
+	   h->llink ->rlink = node;
+	   h->llink = node;
 
+	   return 1;
+   }
+}
 
 /**
  * list의 마지막 노드 삭제
  */
 int deleteLast(listNode* h) {
+   listNode* frontnode;                // 선행노드 선언
+   listNode* delLastnode;              // 삭제하고하는 곳을 가리키는 노드 선언
    
-	return 1;
-}
+   if(h -> rlink == h)
+   {   // 삭제할 노드가 없을 경우 종료
+   	  freeList(h);
+      return 1;
+   } 
+   else if(h->rlink ->rlink == h){                           // 2개 이상의 노드가 있을 경우
+		  free(h);
+		  h->rlink = NULL;
+		  return 1;
+   }
+	else{
+	  frontnode = h->rlink;               // 삭제할 delLastnode 앞의 frontnode를 첫번째 노드로 설정
+	  delLastnode = h -> rlink ->rlink;      // 삭제할 노드를 두번째 노드로 설정
+      while(delLastnode -> rlink != h){      // 삭제할 노드가 NULL이 아닐때까지 
+         frontnode = delLastnode;         // frontnode와 delLastnode를 뒤로 이동
+         delLastnode = delLastnode -> rlink;
+      }
+      free(delLastnode);                  // 마지막 노드 발견시 마지막 노드 메모리 반환
+      frontnode -> rlink = NULL;            // frontnode가 delLastnode에 가리키는 링크 NULL 지정
+	  }
+	  return 1;
+   }	
 
 
 /**
  * list 처음에 key에 대한 노드하나를 추가
  */
 int insertFirst(listNode* h, int key) {             // 첫번째 위치에 노드를 삽입하는 함수
-    listNode* newNode, *temp;                       // newNode라는 첫번째 노드와 temp라는 임시 순회 포인터 지정
+    
+	listNode* newNode, *temp;                       // newNode라는 첫번째 노드와 temp라는 임시 순회 포인터 지정
     newNode = (listNode*)malloc(sizeof(listNode));  // 첫번째 위치에 삽입하게 될 newNode 할당
     newNode -> key = key;                           // newNode의 데이터필드 값을 key로 지정
     if(h -> rlink == NULL){                         // 만약 헤더노드의 오른쪽 링크가 NULL 이라면(입력된 노드가 없다면)
@@ -215,6 +255,7 @@ int insertFirst(listNode* h, int key) {             // 첫번째 위치에 노드를 삽입
     
     }
 	return 1;
+	
 }
 
 /**
