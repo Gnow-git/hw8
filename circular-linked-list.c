@@ -14,25 +14,25 @@
 #include<stdlib.h>
 /* 필요한 헤더파일 추가 */
 
-typedef struct Node {
-	int key;
-	struct Node* llink;
-	struct Node* rlink;
+typedef struct Node {		// 원형 연결리스트 노드 생성
+	int key;				// 리스트의 데이터 필드 key 생성
+	struct Node* llink;		// 원형 연결리스트의 왼쪽노드와 연결하는 포인터
+	struct Node* rlink;		// 원형 연결리스트의 오른쪽노드와 연결하는 포인터
 } listNode;
 
 /* 함수 리스트 */
-int initialize(listNode** h);
-int freeList(listNode* h);
-int insertLast(listNode* h, int key);
-int deleteLast(listNode* h);
-int insertFirst(listNode* h, int key);
-int deleteFirst(listNode* h);
-int invertList(listNode* h);
+int initialize(listNode** h);				// 리스트 생성 후 초기화하는 함수
+int freeList(listNode* h);					// 리스트 할당을 해제하는 함수
+int insertLast(listNode* h, int key);		// 마지막 위치에 노드를 삽입하는 함수
+int deleteLast(listNode* h);				// 마지막 위치의 노드를 삭제하는 함수
+int insertFirst(listNode* h, int key);		// 첫번째 위치에 노드를 삽입하는 함수
+int deleteFirst(listNode* h);				// 첫번째 위치의 노드를 삭제하는 함수
+int invertList(listNode* h);				// 노드의 위치를 반전시키는 함수
 
-int insertNode(listNode* h, int key);
-int deleteNode(listNode* h, int key);
+int insertNode(listNode* h, int key);		// 조건하는 위치에 노드 삽입하는 함수
+int deleteNode(listNode* h, int key);		// 원하는 노드의 값을 삭제하는 함수
 
-void printList(listNode* h);
+void printList(listNode* h);				// 노드를 보여주는 함수
 
 
 
@@ -106,7 +106,7 @@ int main()
 }
 
 
-int initialize(listNode** h) {
+int initialize(listNode** h) {				// 리스트 생성 후 초기화하는 함수
 
 	/* headNode가 NULL이 아니면, freeNode를 호출하여 할당된 메모리 모두 해제 */
 	if(*h != NULL)
@@ -121,7 +121,7 @@ int initialize(listNode** h) {
 }
 
 /* 메모리 해제 */
-int freeList(listNode* h){
+int freeList(listNode* h){		// 리스트 할당을 해제하는 함수
     listNode* p = h;          // 노드 p에 헤드 값 first 지정
 
    listNode* prev = NULL;           // prev라는 노드에 NULL 지정
@@ -136,20 +136,20 @@ int freeList(listNode* h){
 
 
 
-void printList(listNode* h) {
+void printList(listNode* h) {	// 노드를 보여주는 함수
 	int i = 0;
 	listNode* p;
 
 	printf("\n---PRINT\n");
 
-	if(h == NULL) {
+	if(h == NULL) {				// 노드가 없을때 출력
 		printf("Nothing to print....\n");
 		return;
 	}
 
 	p = h->rlink;
 
-	while(p != NULL && p != h) {
+	while(p != NULL && p != h) {	
 		printf("[ [%d]=%d ] ", i, p->key);
 		p = p->rlink;
 		i++;
@@ -157,8 +157,8 @@ void printList(listNode* h) {
 	printf("  items = %d\n", i);
 
 
-	/* print addresses */
-	printf("\n---checking addresses of links\n");
+	/* print addresses */					//노드가 있을때 출력
+	printf("\n---checking addresses of links\n");	
 	printf("-------------------------------\n");
 	printf("head node: [llink]=%p, [head]=%p, [rlink]=%p\n", h->llink, h, h->rlink);
 
@@ -177,24 +177,24 @@ void printList(listNode* h) {
 /**
  * list에 key에 대한 노드하나를 추가
  */
-int insertLast(listNode* h, int key) {
+int insertLast(listNode* h, int key) {					    // 마지막 위치에 노드를 삽입하는 함수
 
    listNode* node = (listNode*)malloc(sizeof(listNode));   // 신규 노드 지정 후 node의 데이터 공간을 메모리에 할당 받아 node에 저장.
-   listNode* lastNode;         // 노드 존재시 마지막 노드 정의.
-   node -> key = key;         // node 필드에 key를 저장
-   node ->rlink = NULL;         // key 저장 후 아직 가리키는 노드가 없기때문에 NULL 할당	
-   if(h  == NULL ){   // NULL일 경우
-      h -> rlink = node;      // 시작노드가 node를 가리킴
-	  h -> llink = node;
-	  node -> llink = h;
-	  node -> rlink = h;
+   listNode* lastNode;        							   // 노드 존재시 마지막 노드 정의.
+   node -> key = key;         							   // node 필드에 key를 저장
+   node ->rlink = NULL;         						   // key 저장 후 아직 가리키는 노드가 없기때문에 NULL 할당	
+   if(h  == NULL ){   									   // NULL일 경우
+      h -> rlink = node;      							   // h의 rlink가 node를 가리킴
+	  h -> llink = node;								   // h의 llink가 node를 가리킴
+	  node -> llink = h;								   // node의 llink가 h를 가리킴
+	  node -> rlink = h;								   // node의 rlink가 h를 가리킴
       return 1;            // 종료
    }
    else{
-	   node -> rlink = h;
-	   node-> llink = h->llink;
-	   h->llink ->rlink = node;
-	   h->llink = node;
+	   node -> rlink = h;								   // node의 rlink가 h를 가리킴
+	   node-> llink = h->llink;							   // node의 llink가 h의 llink를 가리킴
+	   h->llink ->rlink = node;							   // h의 llink가 가리키고 있는 노드의 rlink가 node를 가리킴
+	   h->llink = node;									   // h의 llink가 node를 가리킴
 
 	   return 1;
    }
@@ -269,7 +269,7 @@ int deleteFirst(listNode* h) {
       return 0;
    } 
 
-   else if(h -> rlink == NULL){         // h노드의 rlink가 NULL이 아니면
+   else if(h -> rlink == NULL){         // h노드의 rlink가 NULL이면
       freeList(h);                      // h노드에 할당된 메모리 제거
       h -> rlink = NULL;                // h노드의 rlink, llink NULL 처리
       h -> llink = NULL;              
@@ -316,11 +316,11 @@ int invertList(listNode* h) {
  **/
 int insertNode(listNode* h, int key) {
     listNode* node = (listNode*)malloc(sizeof(listNode));	//node라는 리스트 노드 할당
-	listNode* find = h ->llink;								// 찾고자하는 
+	listNode* find = h ->llink;								
 	node->key = key;
 	if(h == NULL)
 	{
-		printf("저장된 데이터가 없습니다.\n");
+		printf("저장된 데이터가 없습니다.\n");				
 		node->rlink = NULL;
 		node->llink = NULL;
 		return 0;
